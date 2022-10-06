@@ -118,7 +118,17 @@ parcelRequire = (function (modules, cache, entry, globalName) {
 
   return newRequire;
 })({"src/index.js":[function(require,module,exports) {
+if (document.readyState !== "loading") {
+  console.log("Document is ready!");
+  initializeCode();
+} else {
+  document.addEventListener("DOMContentLoaded", function () {
+    console.log("Document is ready after waiting!");
+    initializeCode();
+  });
+}
 
+function initializeCode() {}
 },{}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
