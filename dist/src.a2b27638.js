@@ -137,61 +137,161 @@ if (document.readyState !== "loading") {
 }
 
 function initializeCode() {
-  var fetchData = /*#__PURE__*/function () {
-    var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
-      var url, res, data;
-      return _regeneratorRuntime().wrap(function _callee$(_context) {
-        while (1) {
-          switch (_context.prev = _context.next) {
-            case 0:
-              url = "https://geo.stat.fi/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=tilastointialueet:kunta4500k&outputFormat=json&srsName=EPSG:4326";
-              _context.next = 3;
-              return fetch(url);
+  return _initializeCode.apply(this, arguments);
+}
 
-            case 3:
-              res = _context.sent;
-              _context.next = 6;
-              return res.json();
+function _initializeCode() {
+  _initializeCode = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee4() {
+    var fetchData, fetchPositive, fetchNegative, initMap, getFeature, positiveArray, negativeArray;
+    return _regeneratorRuntime().wrap(function _callee4$(_context4) {
+      while (1) {
+        switch (_context4.prev = _context4.next) {
+          case 0:
+            fetchData = /*#__PURE__*/function () {
+              var _ref = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee() {
+                var url, res, data;
+                return _regeneratorRuntime().wrap(function _callee$(_context) {
+                  while (1) {
+                    switch (_context.prev = _context.next) {
+                      case 0:
+                        url = "https://geo.stat.fi/geoserver/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=tilastointialueet:kunta4500k&outputFormat=json&srsName=EPSG:4326";
+                        _context.next = 3;
+                        return fetch(url);
 
-            case 6:
-              data = _context.sent;
-              console.log(data);
-              initMap(data);
+                      case 3:
+                        res = _context.sent;
+                        _context.next = 6;
+                        return res.json();
 
-            case 9:
-            case "end":
-              return _context.stop();
-          }
+                      case 6:
+                        data = _context.sent;
+                        console.log(data);
+                        initMap(data);
+
+                      case 9:
+                      case "end":
+                        return _context.stop();
+                    }
+                  }
+                }, _callee);
+              }));
+
+              return function fetchData() {
+                return _ref.apply(this, arguments);
+              };
+            }();
+
+            fetchPositive = /*#__PURE__*/function () {
+              var _ref2 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee2() {
+                var url, res, data, positiveArray;
+                return _regeneratorRuntime().wrap(function _callee2$(_context2) {
+                  while (1) {
+                    switch (_context2.prev = _context2.next) {
+                      case 0:
+                        url = "https://statfin.stat.fi/PxWeb/sq/4bb2c735-1dc3-4c5e-bde7-2165df85e65f";
+                        _context2.next = 3;
+                        return fetch(url);
+
+                      case 3:
+                        res = _context2.sent;
+                        _context2.next = 6;
+                        return res.json();
+
+                      case 6:
+                        data = _context2.sent;
+                        positiveArray = Object.values(data.dataset.value);
+                        return _context2.abrupt("return", positiveArray);
+
+                      case 9:
+                      case "end":
+                        return _context2.stop();
+                    }
+                  }
+                }, _callee2);
+              }));
+
+              return function fetchPositive() {
+                return _ref2.apply(this, arguments);
+              };
+            }();
+
+            fetchNegative = /*#__PURE__*/function () {
+              var _ref3 = _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+                var url, res, data, negativeArray;
+                return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+                  while (1) {
+                    switch (_context3.prev = _context3.next) {
+                      case 0:
+                        url = "https://statfin.stat.fi/PxWeb/sq/944493ca-ea4d-4fd9-a75c-4975192f7b6e";
+                        _context3.next = 3;
+                        return fetch(url);
+
+                      case 3:
+                        res = _context3.sent;
+                        _context3.next = 6;
+                        return res.json();
+
+                      case 6:
+                        data = _context3.sent;
+                        negativeArray = Object.values(data.dataset.value);
+                        return _context3.abrupt("return", negativeArray);
+
+                      case 9:
+                      case "end":
+                        return _context3.stop();
+                    }
+                  }
+                }, _callee3);
+              }));
+
+              return function fetchNegative() {
+                return _ref3.apply(this, arguments);
+              };
+            }();
+
+            initMap = function initMap(dataMunicipality) {
+              var map = L.map("map", {
+                minZoom: -3
+              });
+              var geoJson = L.geoJSON(dataMunicipality, {
+                onEachFeature: getFeature,
+                weight: 2
+              }).addTo(map);
+              var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+                maxZoom: 19,
+                attribution: "© OpenStreetMap"
+              }).addTo(map);
+              map.fitBounds(geoJson.getBounds());
+            };
+
+            getFeature = function getFeature(feature, layer) {
+              if (!feature) return;
+              layer.bindTooltip(feature.properties.name);
+              layer.bindPopup("<ul>\n            <li>Name: ".concat(feature.properties.name, "</li>\n            <li>Positive migration: ").concat(positiveArray[feature.properties.kunta], "</li>\n            <li>Negative migration: ").concat(negativeArray[feature.properties.kunta], "</li>\n      </ul>"));
+            };
+
+            _context4.next = 7;
+            return fetchPositive();
+
+          case 7:
+            positiveArray = _context4.sent;
+            console.log(positiveArray);
+            _context4.next = 11;
+            return fetchNegative();
+
+          case 11:
+            negativeArray = _context4.sent;
+            console.log(negativeArray);
+            fetchData();
+
+          case 14:
+          case "end":
+            return _context4.stop();
         }
-      }, _callee);
-    }));
-
-    return function fetchData() {
-      return _ref.apply(this, arguments);
-    };
-  }();
-
-  var initMap = function initMap(data) {
-    var map = L.map("map", {
-      minZoom: -3
-    });
-    var geoJson = L.geoJSON(data, {
-      onEachFeature: getFeature,
-      weight: 2
-    }).addTo(map);
-    var osm = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: "© OpenStreetMap"
-    }).addTo(map);
-    map.fitBounds(geoJson.getBounds());
-  };
-
-  var getFeature = function getFeature(feature, layer) {
-    if (!feature) return;
-    layer.bindTooltip(feature.properties.name);
-  };
-
-  fetchData();
+      }
+    }, _callee4);
+  }));
+  return _initializeCode.apply(this, arguments);
 }
 },{}],"node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
